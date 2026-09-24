@@ -1,8 +1,17 @@
+package src;
+
 public class Main {
+
     public static void main(String[] args) {
-        // TODO: create Pantry, RecipeBook, Recommender objects
-        // TODO: call recipeBook.loadDefaultRecipes()
-        // TODO: create Menu with those objects
-        // TODO: call menu.start()
+
+        Pantry pantry = new Pantry();
+        RecipeBook recipeBook = new RecipeBook();
+        Recommender recommender = new Recommender();
+
+        recipeBook.loadDefaultRecipes();
+
+        Menu menu = new Menu(pantry, recipeBook, recommender);
+
+        menu.start();
     }
 }
