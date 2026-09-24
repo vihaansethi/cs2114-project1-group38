@@ -2,10 +2,20 @@ package src;
 
 import java.util.ArrayList;
 
+
+/**
+ * Holds the list of ingredients the user currently has on hand.
+ * Supports adding, removing, and viewing pantry contents, and
+ * validates input so bad data (blank names, duplicates) never
+ * makes it into the list.
+ */
 public class Pantry
 {
     private ArrayList<Ingredient> items;
 
+    /**
+     * Creates an empty pantry.
+     */
     public Pantry()
     {
         items = new ArrayList<Ingredient>();
@@ -13,6 +23,11 @@ public class Pantry
     }
 
 
+    /**
+     * Adds an ingredient to the pantry, unless it's blank, too long,
+     * or already present.
+     * @param name the ingredient name to add
+     */
     public void addIngredient(String name)
     {
         if (name == null || name.trim().isEmpty())
@@ -43,6 +58,13 @@ public class Pantry
     }
 
 
+    /**
+     * Removes an ingredient from the pantry if it exists.
+     * @param name 
+     *      the ingredient name to remove
+     * @return 
+     *      true if the ingredient was found and removed, false otherwise
+     */
     public boolean removeIngredient(String name)
     {
         if (name == null)
@@ -63,12 +85,18 @@ public class Pantry
     }
 
 
+    /**
+     * @return the list of ingredients currently in the pantry
+     */
     public ArrayList<Ingredient> getItems()
     {
         return items;
     }
 
 
+    /**
+     * @return true if the pantry has no ingredients
+     */
     public boolean isEmpty()
     {
         return items.isEmpty();

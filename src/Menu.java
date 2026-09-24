@@ -3,6 +3,11 @@ package src;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
+/**
+ * Handles all terminal input and output.
+ *
+ */
 public class Menu
 {
 
@@ -11,6 +16,13 @@ public class Menu
     private Recommender recommender;
     private Scanner scanner;
 
+
+    /**
+     * Creates a Menu wired up to the given pantry, recipe book, and recommender.
+     * @param pantry the pantry to operate on
+     * @param recipeBook the recipe collection to search
+     * @param recommender the matching engine to use for recommendations
+     */
     public Menu(Pantry pantry, RecipeBook recipeBook, Recommender recommender)
     {
 
@@ -21,6 +33,10 @@ public class Menu
     }
 
 
+    /**
+     * Runs the main menu loop: prints options, reads the user's
+     * choice, and keeps looping until they choose to quit.
+     */
     public void start()
     {
 
@@ -84,6 +100,9 @@ public class Menu
     }
 
 
+    /**
+     * Prompts the user for an ingredient name and adds it to the pantry.
+     */
     public void handleAddIngredient()
     {
 
@@ -94,6 +113,9 @@ public class Menu
     }
 
 
+    /**
+     * Prompts the user for an ingredient name and removes it from the pantry.
+     */
     public void handleRemoveIngredient()
     {
 
@@ -112,7 +134,9 @@ public class Menu
         }
     }
 
-
+    /**
+     * Prints every ingredient currently in the pantry.
+     */
     public void handleViewPantry()
     {
 
@@ -131,6 +155,10 @@ public class Menu
     }
 
 
+    /**
+     * Prints full recipe matches and "almost" matches based on
+     * the current pantry contents.
+     */
     public void handleRecommendations()
     {
 
