@@ -2,21 +2,27 @@ package src;
 
 import java.util.ArrayList;
 
-public class Recipe {
+public class Recipe
+{
 
     private String name;
     private ArrayList<Ingredient> requiredIngredients;
 
-    public Recipe(String name, ArrayList<Ingredient> ingredients) {
+    public Recipe(String name, ArrayList<Ingredient> ingredients)
+    {
         this.name = name;
         this.requiredIngredients = ingredients;
     }
 
-    public String getName() {
+
+    public String getName()
+    {
         return name;
     }
 
-    public ArrayList<Ingredient> getIngredients() {
+
+    public ArrayList<Ingredient> getIngredients()
+    {
         return requiredIngredients;
     }
 }

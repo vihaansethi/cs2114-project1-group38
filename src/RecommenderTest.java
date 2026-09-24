@@ -1,12 +1,15 @@
 package src;
+
 import java.util.ArrayList;
 
-public class RecommenderTest {
+public class RecommenderTest
+{
 
     static int passed = 0;
     static int failed = 0;
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         testFindMissing_normal();
         testFindMissing_badInput();
         testGetFullMatches_normal();
@@ -17,8 +20,10 @@ public class RecommenderTest {
         System.out.println("\n" + passed + " passed, " + failed + " failed");
     }
 
+
     // Normal: recipe needs [egg, flour], pantry has both -> returns empty list
-    static void testFindMissing_normal() {
+    static void testFindMissing_normal()
+    {
         Pantry pantry = new Pantry();
         pantry.addIngredient("egg");
         pantry.addIngredient("flour");
@@ -28,12 +33,16 @@ public class RecommenderTest {
         required.add(new Ingredient("flour"));
         Recipe recipe = new Recipe("Pancakes", required);
 
-        ArrayList<Ingredient> missing = new Recommender().findMissing(recipe, pantry);
+        ArrayList<Ingredient> missing =
+            new Recommender().findMissing(recipe, pantry);
         check("findMissing - normal (full match)", missing.isEmpty());
     }
 
-    // Bad input: recipe needs [egg, flour, sugar], pantry has only [egg] -> returns [flour, sugar]
-    static void testFindMissing_badInput() {
+
+    // Bad input: recipe needs [egg, flour, sugar], pantry has only [egg] ->
+    // returns [flour, sugar]
+    static void testFindMissing_badInput()
+    {
         Pantry pantry = new Pantry();
         pantry.addIngredient("egg");
 
@@ -43,15 +52,18 @@ public class RecommenderTest {
         required.add(new Ingredient("sugar"));
         Recipe recipe = new Recipe("Cookies", required);
 
-        ArrayList<Ingredient> missing = new Recommender().findMissing(recipe, pantry);
-        boolean ok = missing.size() == 2
-                && missing.get(0).getName().equals("flour")
+        ArrayList<Ingredient> missing =
+            new Recommender().findMissing(recipe, pantry);
+        boolean ok =
+            missing.size() == 2 && missing.get(0).getName().equals("flour")
                 && missing.get(1).getName().equals("sugar");
         check("findMissing - missing 2 ingredients", ok);
     }
 
+
     // Normal: pantry matches 2 of 5 recipes fully -> returns those 2
-    static void testGetFullMatches_normal() {
+    static void testGetFullMatches_normal()
+    {
         Pantry pantry = new Pantry();
         pantry.addIngredient("egg");
         pantry.addIngredient("flour");
@@ -83,25 +95,33 @@ public class RecommenderTest {
         r5.add(new Ingredient("rice"));
         book.addRecipe(new Recipe("Rice Bowl", r5));
 
-        ArrayList<Recipe> fullMatches = new Recommender().getFullMatches(book, pantry);
+        ArrayList<Recipe> fullMatches =
+            new Recommender().getFullMatches(book, pantry);
         boolean ok = fullMatches.size() == 2
-                && fullMatches.get(0).getName().equals("Pancakes")
-                && fullMatches.get(1).getName().equals("Cookies");
+            && fullMatches.get(0).getName().equals("Pancakes")
+            && fullMatches.get(1).getName().equals("Cookies");
         check("getFullMatches - 2 of 5 recipes match", ok);
     }
 
+
     // Bad input: empty RecipeBook -> returns empty list, no crash
-    static void testGetFullMatches_emptyBook() {
+    static void testGetFullMatches_emptyBook()
+    {
         Pantry pantry = new Pantry();
         pantry.addIngredient("egg");
         RecipeBook emptyBook = new RecipeBook();
 
-        ArrayList<Recipe> fullMatches = new Recommender().getFullMatches(emptyBook, pantry);
-        check("getFullMatches - empty book returns empty list", fullMatches.isEmpty());
+        ArrayList<Recipe> fullMatches =
+            new Recommender().getFullMatches(emptyBook, pantry);
+        check(
+            "getFullMatches - empty book returns empty list",
+            fullMatches.isEmpty());
     }
 
+
     // Normal: recipe missing exactly 1 ingredient, maxMissing=1 -> included
-    static void testGetAlmostMatches_withinRange() {
+    static void testGetAlmostMatches_withinRange()
+    {
         Pantry pantry = new Pantry();
         pantry.addIngredient("egg");
         pantry.addIngredient("flour");
@@ -113,13 +133,18 @@ public class RecommenderTest {
         needsMilk.add(new Ingredient("milk"));
         book.addRecipe(new Recipe("Waffles", needsMilk));
 
-        ArrayList<Recipe> almost = new Recommender().getAlmostMatches(book, pantry, 1);
-        boolean ok = almost.size() == 1 && almost.get(0).getName().equals("Waffles");
+        ArrayList<Recipe> almost =
+            new Recommender().getAlmostMatches(book, pantry, 1);
+        boolean ok =
+            almost.size() == 1 && almost.get(0).getName().equals("Waffles");
         check("getAlmostMatches - missing 1, maxMissing 1 -> included", ok);
     }
 
-    // Bad input: recipe missing 3 ingredients, maxMissing=1 -> excluded; also excludes 0-missing
-    static void testGetAlmostMatches_outsideRange() {
+
+    // Bad input: recipe missing 3 ingredients, maxMissing=1 -> excluded; also
+    // excludes 0-missing
+    static void testGetAlmostMatches_outsideRange()
+    {
         Pantry pantry = new Pantry();
         pantry.addIngredient("egg");
 
@@ -127,23 +152,34 @@ public class RecommenderTest {
 
         ArrayList<Ingredient> fullMatch = new ArrayList<>();
         fullMatch.add(new Ingredient("egg"));
-        book.addRecipe(new Recipe("Boiled Egg", fullMatch)); // 0 missing, should NOT appear
+        book.addRecipe(new Recipe("Boiled Egg", fullMatch)); // 0 missing,
+                                                             // should NOT
+                                                             // appear
 
         ArrayList<Ingredient> tooFar = new ArrayList<>();
         tooFar.add(new Ingredient("flour"));
         tooFar.add(new Ingredient("sugar"));
         tooFar.add(new Ingredient("butter"));
-        book.addRecipe(new Recipe("Cake", tooFar)); // 3 missing, should NOT appear with maxMissing=1
+        book.addRecipe(new Recipe("Cake", tooFar)); // 3 missing, should NOT
+                                                    // appear with maxMissing=1
 
-        ArrayList<Recipe> almost = new Recommender().getAlmostMatches(book, pantry, 1);
-        check("getAlmostMatches - excludes 0-missing and over-threshold", almost.isEmpty());
+        ArrayList<Recipe> almost =
+            new Recommender().getAlmostMatches(book, pantry, 1);
+        check(
+            "getAlmostMatches - excludes 0-missing and over-threshold",
+            almost.isEmpty());
     }
 
-    static void check(String testName, boolean condition) {
-        if (condition) {
+
+    static void check(String testName, boolean condition)
+    {
+        if (condition)
+        {
             passed++;
             System.out.println("PASS: " + testName);
-        } else {
+        }
+        else
+        {
             failed++;
             System.out.println("FAIL: " + testName);
         }

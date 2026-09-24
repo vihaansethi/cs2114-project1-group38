@@ -3,16 +3,16 @@ package src;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Menu {
+public class Menu
+{
 
     private Pantry pantry;
     private RecipeBook recipeBook;
     private Recommender recommender;
     private Scanner scanner;
 
-    public Menu(Pantry pantry,
-                RecipeBook recipeBook,
-                Recommender recommender) {
+    public Menu(Pantry pantry, RecipeBook recipeBook, Recommender recommender)
+    {
 
         this.pantry = pantry;
         this.recipeBook = recipeBook;
@@ -20,11 +20,14 @@ public class Menu {
         this.scanner = new Scanner(System.in);
     }
 
-    public void start() {
+
+    public void start()
+    {
 
         boolean running = true;
 
-        while (running) {
+        while (running)
+        {
 
             System.out.println();
             System.out.println("=== PantryPal ===");
@@ -39,16 +42,18 @@ public class Menu {
 
             int choice;
 
-            try {
+            try
+            {
                 choice = Integer.parseInt(input);
             }
-            catch (NumberFormatException e) {
-                System.out.println(
-                        "Invalid option, please try 1-5.");
+            catch (NumberFormatException e)
+            {
+                System.out.println("Invalid option, please try 1-5.");
                 continue;
             }
 
-            switch (choice) {
+            switch (choice)
+            {
                 case 1:
                     handleAddIngredient();
                     break;
@@ -71,15 +76,16 @@ public class Menu {
                     break;
 
                 default:
-                    System.out.println(
-                            "Invalid option, please try 1-5.");
+                    System.out.println("Invalid option, please try 1-5.");
             }
         }
 
         scanner.close();
     }
 
-    public void handleAddIngredient() {
+
+    public void handleAddIngredient()
+    {
 
         System.out.print("Enter ingredient to add: ");
         String name = scanner.nextLine();
@@ -87,92 +93,100 @@ public class Menu {
         pantry.addIngredient(name);
     }
 
-    public void handleRemoveIngredient() {
+
+    public void handleRemoveIngredient()
+    {
 
         System.out.print("Enter ingredient to remove: ");
         String name = scanner.nextLine();
 
         boolean removed = pantry.removeIngredient(name);
 
-        if (removed) {
-            System.out.println(
-                    name + " removed from pantry.");
+        if (removed)
+        {
+            System.out.println(name + " removed from pantry.");
         }
-        else {
-            System.out.println(
-                    "That item isn't in your pantry.");
+        else
+        {
+            System.out.println("That item isn't in your pantry.");
         }
     }
 
-    public void handleViewPantry() {
 
-        if (pantry.isEmpty()) {
+    public void handleViewPantry()
+    {
+
+        if (pantry.isEmpty())
+        {
             System.out.println("Your pantry is empty.");
             return;
         }
 
         System.out.println("Your pantry:");
 
-        for (Ingredient item : pantry.getItems()) {
+        for (Ingredient item : pantry.getItems())
+        {
             System.out.println("- " + item.getName());
         }
     }
 
-    public void handleRecommendations() {
 
-        if (pantry.isEmpty()) {
-            System.out.println(
-                    "Add some ingredients first!");
+    public void handleRecommendations()
+    {
+
+        if (pantry.isEmpty())
+        {
+            System.out.println("Add some ingredients first!");
             return;
         }
 
         ArrayList<Recipe> fullMatches =
-                recommender.getFullMatches(
-                        recipeBook, pantry);
+            recommender.getFullMatches(recipeBook, pantry);
 
         ArrayList<Recipe> almostMatches =
-                recommender.getAlmostMatches(
-                        recipeBook, pantry, 2);
+            recommender.getAlmostMatches(recipeBook, pantry, 2);
 
         System.out.println();
         System.out.println("Recipes you can make:");
 
-        if (fullMatches.isEmpty()) {
+        if (fullMatches.isEmpty())
+        {
             System.out.println("No full matches found.");
         }
-        else {
-            for (Recipe recipe : fullMatches) {
-                System.out.println(
-                        "- " + recipe.getName());
+        else
+        {
+            for (Recipe recipe : fullMatches)
+            {
+                System.out.println("- " + recipe.getName());
             }
         }
 
         System.out.println();
-        System.out.println(
-                "Recipes you're close to making:");
+        System.out.println("Recipes you're close to making:");
 
-        if (almostMatches.isEmpty()) {
-            System.out.println(
-                    "No almost-matches found.");
+        if (almostMatches.isEmpty())
+        {
+            System.out.println("No almost-matches found.");
         }
-        else {
-            for (Recipe recipe : almostMatches) {
+        else
+        {
+            for (Recipe recipe : almostMatches)
+            {
 
-                System.out.println(
-                        "- " + recipe.getName());
+                System.out.println("- " + recipe.getName());
 
                 ArrayList<Ingredient> missing =
-                        recommender.findMissing(
-                                recipe, pantry);
+                    recommender.findMissing(recipe, pantry);
 
                 System.out.print("  Missing: ");
 
-                for (int i = 0; i < missing.size(); i++) {
+                for (int i = 0; i < missing.size(); i++)
+                {
 
-                    System.out.print(
-                            missing.get(i).getName());
+                    System.out.print(missing.get(i).getName());
 
-                    if (i < missing.size() - 1) {
+                    if (i < missing.size() - 1)
+                    {
                         System.out.print(", ");
                     }
                 }

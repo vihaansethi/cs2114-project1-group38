@@ -1,5 +1,5 @@
-public class YourName {
-    public static void main(String[] args) {
-        System.out.println("Fernando Zuniga is on the team.");
-    }
+public class FernandoZuniga{
+public static void main(String[] args) {
+    System.out.println("Fernando is on the team.");
+}
 }
