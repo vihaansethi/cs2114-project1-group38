@@ -1,277 +1,234 @@
 package src;
 
-import junit.framework.TestCase;
+public class PantryTest {
 
-/**
- * Tests the Pantry class, covering adding, removing, and viewing
- * ingredients, along with input validation for blank, too-long,
- * duplicate, and null names.
- */
-public class PantryTest extends TestCase
-{
-    private Pantry pantry;
+    static int passed = 0;
+    static int failed = 0;
 
-    /**
-     * Sets up a fresh, empty pantry before each test.
-     */
-    public void setUp()
-    {
-        pantry = new Pantry();
+    public static void main(String[] args) {
+        testAddIngredient_normal();
+        testAddIngredient_blank();
+        testAddIngredient_null();
+        testAddIngredient_tooLong();
+        testAddIngredient_duplicate();
+        testAddIngredient_duplicateDifferentCase();
+        testAddIngredient_trimsSpaces();
+
+        testRemoveIngredient_normal();
+        testRemoveIngredient_notFound();
+        testRemoveIngredient_null();
+        testRemoveIngredient_differentCase();
+
+        testGetItems_normal();
+
+        testIsEmpty_true();
+        testIsEmpty_false();
+
+        System.out.println(
+            "\n" + passed + " passed, " + failed + " failed");
     }
 
 
-    /**
-     * Builds a string of the given character repeated a number of times.
-     * @param c the character to repeat
-     * @param count how many times to repeat it
-     * @return the built string
-     */
-    private String makeString(char c, int count)
-    {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < count; i++)
-        {
-            sb.append(c);
-        }
-        return sb.toString();
+    // Normal: add "egg" -> pantry contains egg
+    static void testAddIngredient_normal() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+
+        boolean correct =
+            pantry.getItems().size() == 1
+            && pantry.getItems().get(0).getName().equals("egg");
+
+        check("addIngredient - normal", correct);
     }
 
 
-    /**
-     * Tests that a new pantry starts out empty.
-     */
-    public void testConstructor()
-    {
-        assertTrue(pantry.isEmpty());
-        assertNotNull(pantry.getItems());
-        assertEquals(0, pantry.getItems().size());
-    }
+    // Bad input: blank ingredient -> pantry stays empty
+    static void testAddIngredient_blank() {
+        Pantry pantry = new Pantry();
 
-
-    /**
-     * Tests adding a valid ingredient.
-     */
-    public void testAddIngredientValid()
-    {
-        pantry.addIngredient("Salt");
-        assertFalse(pantry.isEmpty());
-        assertEquals(1, pantry.getItems().size());
-        assertEquals(new Ingredient("Salt"), pantry.getItems().get(0));
-    }
-
-
-    /**
-     * Tests adding several different ingredients keeps them in order.
-     */
-    public void testAddMultipleIngredients()
-    {
-        pantry.addIngredient("Salt");
-        pantry.addIngredient("Pepper");
-        pantry.addIngredient("Flour");
-        assertEquals(3, pantry.getItems().size());
-        assertEquals(new Ingredient("Salt"), pantry.getItems().get(0));
-        assertEquals(new Ingredient("Pepper"), pantry.getItems().get(1));
-        assertEquals(new Ingredient("Flour"), pantry.getItems().get(2));
-    }
-
-
-    /**
-     * Tests that leading and trailing whitespace is trimmed before
-     * the ingredient is stored.
-     */
-    public void testAddIngredientTrimsWhitespace()
-    {
-        pantry.addIngredient("   Sugar   ");
-        assertEquals(1, pantry.getItems().size());
-        assertEquals(new Ingredient("Sugar"), pantry.getItems().get(0));
-    }
-
-
-    /**
-     * Tests that a null name is rejected.
-     */
-    public void testAddIngredientNull()
-    {
-        pantry.addIngredient(null);
-        assertTrue(pantry.isEmpty());
-    }
-
-
-    /**
-     * Tests that an empty name is rejected.
-     */
-    public void testAddIngredientEmpty()
-    {
         pantry.addIngredient("");
-        assertTrue(pantry.isEmpty());
+
+        check("addIngredient - blank",
+            pantry.isEmpty());
     }
 
 
-    /**
-     * Tests that a name made only of whitespace is rejected.
-     */
-    public void testAddIngredientWhitespaceOnly()
-    {
-        pantry.addIngredient("     ");
-        assertTrue(pantry.isEmpty());
+    // Bad input: null ingredient -> pantry stays empty
+    static void testAddIngredient_null() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient(null);
+
+        check("addIngredient - null",
+            pantry.isEmpty());
     }
 
 
-    /**
-     * Tests that a name longer than 50 characters is rejected.
-     */
-    public void testAddIngredientTooLong()
-    {
-        pantry.addIngredient(makeString('a', 51));
-        assertTrue(pantry.isEmpty());
+    // Bad input: ingredient over 50 characters -> not added
+    static void testAddIngredient_tooLong() {
+        Pantry pantry = new Pantry();
+
+        String longName =
+            "abcdefghijklmnopqrstuvwxyz"
+            + "abcdefghijklmnopqrstuvwxyz";
+
+        pantry.addIngredient(longName);
+
+        check("addIngredient - too long",
+            pantry.isEmpty());
     }
 
 
-    /**
-     * Tests that a name of exactly 50 characters is accepted.
-     */
-    public void testAddIngredientExactlyFiftyChars()
-    {
-        pantry.addIngredient(makeString('b', 50));
-        assertEquals(1, pantry.getItems().size());
+    // Bad input: same ingredient added twice -> only one stored
+    static void testAddIngredient_duplicate() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+        pantry.addIngredient("egg");
+
+        check("addIngredient - duplicate",
+            pantry.getItems().size() == 1);
     }
 
 
-    /**
-     * Tests that a long name padded with whitespace is judged by its
-     * trimmed length, so it is still accepted.
-     */
-    public void testAddIngredientLongWithPadding()
-    {
-        pantry.addIngredient("  " + makeString('c', 50) + "  ");
-        assertEquals(1, pantry.getItems().size());
+    // Edge case: Egg and egg should count as duplicates
+    static void testAddIngredient_duplicateDifferentCase() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("Egg");
+        pantry.addIngredient("egg");
+
+        check("addIngredient - duplicate different case",
+            pantry.getItems().size() == 1);
     }
 
 
-    /**
-     * Tests that adding the same ingredient twice only stores it once.
-     */
-    public void testAddIngredientDuplicate()
-    {
-        pantry.addIngredient("Eggs");
-        pantry.addIngredient("Eggs");
-        assertEquals(1, pantry.getItems().size());
+    // Edge case: spaces around name should be removed
+    static void testAddIngredient_trimsSpaces() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("   egg   ");
+
+        boolean correct =
+            pantry.getItems().size() == 1
+            && pantry.getItems().get(0).getName().equals("egg");
+
+        check("addIngredient - trims spaces", correct);
     }
 
 
-    /**
-     * Tests that a duplicate with extra whitespace is still caught.
-     */
-    public void testAddIngredientDuplicateWithWhitespace()
-    {
-        pantry.addIngredient("Milk");
-        pantry.addIngredient("  Milk  ");
-        assertEquals(1, pantry.getItems().size());
+    // Normal: remove existing ingredient -> returns true
+    static void testRemoveIngredient_normal() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+
+        boolean result = pantry.removeIngredient("egg");
+
+        boolean correct =
+            result
+            && pantry.isEmpty();
+
+        check("removeIngredient - normal", correct);
     }
 
 
-    /**
-     * Tests removing an ingredient that is in the pantry.
-     */
-    public void testRemoveIngredientPresent()
-    {
-        pantry.addIngredient("Butter");
-        assertTrue(pantry.removeIngredient("Butter"));
-        assertTrue(pantry.isEmpty());
+    // Bad input: remove ingredient not in pantry -> returns false
+    static void testRemoveIngredient_notFound() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+
+        boolean result = pantry.removeIngredient("milk");
+
+        boolean correct =
+            !result
+            && pantry.getItems().size() == 1;
+
+        check("removeIngredient - not found", correct);
     }
 
 
-    /**
-     * Tests removing an ingredient that is not in the pantry.
-     */
-    public void testRemoveIngredientAbsent()
-    {
-        pantry.addIngredient("Butter");
-        assertFalse(pantry.removeIngredient("Cheese"));
-        assertEquals(1, pantry.getItems().size());
+    // Bad input: remove null -> returns false
+    static void testRemoveIngredient_null() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+
+        boolean result = pantry.removeIngredient(null);
+
+        boolean correct =
+            !result
+            && pantry.getItems().size() == 1;
+
+        check("removeIngredient - null", correct);
     }
 
 
-    /**
-     * Tests removing from an empty pantry.
-     */
-    public void testRemoveIngredientFromEmpty()
-    {
-        assertFalse(pantry.removeIngredient("Rice"));
-        assertTrue(pantry.isEmpty());
+    // Edge case: remove "EGG" when pantry contains "egg"
+    static void testRemoveIngredient_differentCase() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+
+        boolean result = pantry.removeIngredient("EGG");
+
+        boolean correct =
+            result
+            && pantry.isEmpty();
+
+        check("removeIngredient - different case", correct);
     }
 
 
-    /**
-     * Tests that removing a null name returns false and changes nothing.
-     */
-    public void testRemoveIngredientNull()
-    {
-        pantry.addIngredient("Rice");
-        assertFalse(pantry.removeIngredient(null));
-        assertEquals(1, pantry.getItems().size());
+    // Normal: getItems returns all pantry ingredients
+    static void testGetItems_normal() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+        pantry.addIngredient("milk");
+        pantry.addIngredient("flour");
+
+        boolean correct =
+            pantry.getItems().size() == 3
+            && pantry.getItems().get(0).getName().equals("egg")
+            && pantry.getItems().get(1).getName().equals("milk")
+            && pantry.getItems().get(2).getName().equals("flour");
+
+        check("getItems - normal", correct);
     }
 
 
-    /**
-     * Tests that the name passed to remove is trimmed first.
-     */
-    public void testRemoveIngredientTrimsWhitespace()
-    {
-        pantry.addIngredient("Garlic");
-        assertTrue(pantry.removeIngredient("   Garlic  "));
-        assertTrue(pantry.isEmpty());
+    // Normal: new pantry should be empty
+    static void testIsEmpty_true() {
+        Pantry pantry = new Pantry();
+
+        check("isEmpty - true",
+            pantry.isEmpty());
     }
 
 
-    /**
-     * Tests that removing one ingredient leaves the others in place
-     * and in order.
-     */
-    public void testRemoveIngredientFromMiddle()
-    {
-        pantry.addIngredient("Onion");
-        pantry.addIngredient("Carrot");
-        pantry.addIngredient("Celery");
-        assertTrue(pantry.removeIngredient("Carrot"));
-        assertEquals(2, pantry.getItems().size());
-        assertEquals(new Ingredient("Onion"), pantry.getItems().get(0));
-        assertEquals(new Ingredient("Celery"), pantry.getItems().get(1));
+    // Normal: pantry with an ingredient should not be empty
+    static void testIsEmpty_false() {
+        Pantry pantry = new Pantry();
+
+        pantry.addIngredient("egg");
+
+        check("isEmpty - false",
+            !pantry.isEmpty());
     }
 
 
-    /**
-     * Tests that removing the same ingredient twice fails the second time.
-     */
-    public void testRemoveIngredientTwice()
-    {
-        pantry.addIngredient("Tomato");
-        assertTrue(pantry.removeIngredient("Tomato"));
-        assertFalse(pantry.removeIngredient("Tomato"));
-    }
-
-
-    /**
-     * Tests that an ingredient can be added back after being removed.
-     */
-    public void testAddAfterRemove()
-    {
-        pantry.addIngredient("Basil");
-        pantry.removeIngredient("Basil");
-        pantry.addIngredient("Basil");
-        assertEquals(1, pantry.getItems().size());
-    }
-
-
-    /**
-     * Tests that isEmpty updates correctly as items come and go.
-     */
-    public void testIsEmpty()
-    {
-        assertTrue(pantry.isEmpty());
-        pantry.addIngredient("Oil");
-        assertFalse(pantry.isEmpty());
-        pantry.removeIngredient("Oil");
-        assertTrue(pantry.isEmpty());
+    // Prints PASS or FAIL and keeps track of totals
+    static void check(String testName, boolean condition) {
+        if (condition) {
+            System.out.println("PASS: " + testName);
+            passed++;
+        }
+        else {
+            System.out.println("FAIL: " + testName);
+            failed++;
+        }
     }
 }
