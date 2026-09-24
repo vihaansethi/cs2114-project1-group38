@@ -1,11 +1,11 @@
-import java.util.ArrayList:
+import java.util.ArrayList;
 
 public class RecipeBook {
 	private ArrayList<Recipe> recipes;
 
 	public RecipeBook() {
 		//TODO: initialize recipes as an empty ArrayList
-		recipes = new ArraList<Recipe>();
+		recipes = new ArrayList<Recipe>();
 	}
 
 	public void addRecipe(Recipe recipe) {
