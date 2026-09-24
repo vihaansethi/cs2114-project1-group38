@@ -5,7 +5,6 @@ public class Ingredient {
 
 	public Ingredient(String name) {
 		this.name = name.toLowerCase();
-		
 	}
 
 	public String getName() {

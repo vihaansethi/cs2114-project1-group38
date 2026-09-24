@@ -3,7 +3,7 @@ package src;
 import java.util.ArrayList;
 
 public class Pantry {
-	priate ArrayList<Ingredient> items;
+	private ArrayList<Ingredient> items;
 
 	public Pantry() {
 		items = new ArrayList<Ingredient>();
