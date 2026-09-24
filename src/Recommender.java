@@ -1,24 +1,46 @@
 import java.util.ArrayList;
-public class Recommender {
-	public ArrayList<Ingredient> findMissing(Recipe recipe, Pantry pantry) {
-		// TODO: loop through recipe.getIngredients()
-        // TODO: for each, check if it exists in pantry.getItems()
-        // TODO: if not found, add to a "missing" list
-        // TODO: return missing list
-        return null;
-	} 
 
-	public ArrayList<Recipe> getFullMatches(RecipeBook book, Pantry pantry) {
-        // TODO: loop through book.getAllRecipes()
-        // TODO: use findMissing() - if missing list is empty, it's a full match
-        // TODO: return list of full-match recipes
-        return null;
+public class Recommender {
+
+    public ArrayList<Ingredient> findMissing(Recipe recipe, Pantry pantry) {
+        ArrayList<Ingredient> missing = new ArrayList<>();
+        ArrayList<Ingredient> pantryItems = pantry.getItems();
+
+        for (Ingredient required : recipe.getIngredients()) {
+            boolean found = false;
+            for (Ingredient owned : pantryItems) {
+                if (required.equals(owned)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                missing.add(required);
+            }
+        }
+        return missing;
+    }
+
+    public ArrayList<Recipe> getFullMatches(RecipeBook book, Pantry pantry) {
+        ArrayList<Recipe> fullMatches = new ArrayList<>();
+
+        for (Recipe recipe : book.getAllRecipes()) {
+            if (findMissing(recipe, pantry).isEmpty()) {
+                fullMatches.add(recipe);
+            }
+        }
+        return fullMatches;
     }
 
     public ArrayList<Recipe> getAlmostMatches(RecipeBook book, Pantry pantry, int maxMissing) {
-        // TODO: loop through book.getAllRecipes()
-        // TODO: use findMissing() - if missing.size() is between 1 and maxMissing, include it
-        // TODO: return list of almost-match recipes
-        return null;
+        ArrayList<Recipe> almostMatches = new ArrayList<>();
+
+        for (Recipe recipe : book.getAllRecipes()) {
+            int missingCount = findMissing(recipe, pantry).size();
+            if (missingCount >= 1 && missingCount <= maxMissing) {
+                almostMatches.add(recipe);
+            }
+        }
+        return almostMatches;
     }
 }
