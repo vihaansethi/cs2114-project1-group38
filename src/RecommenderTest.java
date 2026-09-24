@@ -2,14 +2,30 @@ package src;
 
 import java.util.ArrayList;
 
+/**
+ * Manual test driver for {@link Recommender}. Each test method builds a small
+ * pantry and/or recipe book, calls a Recommender method, and reports results
+ * through {@link #check(String, boolean)}. A final meta-test confirms that
+ * {@code check} itself records failures correctly.
+ */
 public class RecommenderTest
 {
 
+    /** Number of checks that have passed so far. */
     static int passed = 0;
+
+    /** Number of checks that have failed so far. */
     static int failed = 0;
 
+    /**
+     * Runs every test in order and prints the pass/fail totals.
+     *
+     * @param args
+     *            command-line arguments (unused)
+     */
     public static void main(String[] args)
     {
+        new RecommenderTest();
         testFindMissing_normal();
         testFindMissing_badInput();
         testGetFullMatches_normal();
@@ -17,11 +33,16 @@ public class RecommenderTest
         testGetAlmostMatches_withinRange();
         testGetAlmostMatches_outsideRange();
 
+        testCheck_reportsFailureCorrectly();
+
         System.out.println("\n" + passed + " passed, " + failed + " failed");
     }
 
 
-    // Normal: recipe needs [egg, flour], pantry has both -> returns empty list
+    /**
+     * Normal case for {@code findMissing}: the recipe needs [egg, flour] and
+     * the pantry has both, so the returned list should be empty.
+     */
     static void testFindMissing_normal()
     {
         Pantry pantry = new Pantry();
@@ -39,8 +60,11 @@ public class RecommenderTest
     }
 
 
-    // Bad input: recipe needs [egg, flour, sugar], pantry has only [egg] ->
-    // returns [flour, sugar]
+    /**
+     * Bad-input case for {@code findMissing}: the recipe needs [egg, flour,
+     * sugar] but the pantry only has [egg], so the result should be [flour,
+     * sugar].
+     */
     static void testFindMissing_badInput()
     {
         Pantry pantry = new Pantry();
@@ -54,14 +78,22 @@ public class RecommenderTest
 
         ArrayList<Ingredient> missing =
             new Recommender().findMissing(recipe, pantry);
-        boolean ok =
-            missing.size() == 2 && missing.get(0).getName().equals("flour")
-                && missing.get(1).getName().equals("sugar");
-        check("findMissing - missing 2 ingredients", ok);
+        check(
+            "findMissing - missing 2 ingredients (size)",
+            Integer.valueOf(missing.size()).equals(2));
+        check(
+            "findMissing - first is flour",
+            missing.get(0).getName().equals("flour"));
+        check(
+            "findMissing - second is sugar",
+            missing.get(1).getName().equals("sugar"));
     }
 
 
-    // Normal: pantry matches 2 of 5 recipes fully -> returns those 2
+    /**
+     * Normal case for {@code getFullMatches}: the pantry fully matches 2 of 5
+     * recipes (Pancakes and Cookies), so only those two should be returned.
+     */
     static void testGetFullMatches_normal()
     {
         Pantry pantry = new Pantry();
@@ -97,14 +129,22 @@ public class RecommenderTest
 
         ArrayList<Recipe> fullMatches =
             new Recommender().getFullMatches(book, pantry);
-        boolean ok = fullMatches.size() == 2
-            && fullMatches.get(0).getName().equals("Pancakes")
-            && fullMatches.get(1).getName().equals("Cookies");
-        check("getFullMatches - 2 of 5 recipes match", ok);
+        check(
+            "getFullMatches - size is 2",
+            Integer.valueOf(fullMatches.size()).equals(2));
+        check(
+            "getFullMatches - first is Pancakes",
+            fullMatches.get(0).getName().equals("Pancakes"));
+        check(
+            "getFullMatches - second is Cookies",
+            fullMatches.get(1).getName().equals("Cookies"));
     }
 
 
-    // Bad input: empty RecipeBook -> returns empty list, no crash
+    /**
+     * Bad-input case for {@code getFullMatches}: an empty recipe book should
+     * produce an empty list without crashing.
+     */
     static void testGetFullMatches_emptyBook()
     {
         Pantry pantry = new Pantry();
@@ -119,7 +159,10 @@ public class RecommenderTest
     }
 
 
-    // Normal: recipe missing exactly 1 ingredient, maxMissing=1 -> included
+    /**
+     * Normal case for {@code getAlmostMatches}: a recipe missing exactly one
+     * ingredient with {@code maxMissing = 1} should be included.
+     */
     static void testGetAlmostMatches_withinRange()
     {
         Pantry pantry = new Pantry();
@@ -135,14 +178,20 @@ public class RecommenderTest
 
         ArrayList<Recipe> almost =
             new Recommender().getAlmostMatches(book, pantry, 1);
-        boolean ok =
-            almost.size() == 1 && almost.get(0).getName().equals("Waffles");
-        check("getAlmostMatches - missing 1, maxMissing 1 -> included", ok);
+        check(
+            "getAlmostMatches - size is 1",
+            Integer.valueOf(almost.size()).equals(1));
+        check(
+            "getAlmostMatches - is Waffles",
+            almost.get(0).getName().equals("Waffles"));
     }
 
 
-    // Bad input: recipe missing 3 ingredients, maxMissing=1 -> excluded; also
-    // excludes 0-missing
+    /**
+     * Bad-input case for {@code getAlmostMatches}: a recipe missing 3
+     * ingredients is excluded when {@code maxMissing = 1}, and a recipe missing
+     * 0 ingredients is excluded too, so the result should be empty.
+     */
     static void testGetAlmostMatches_outsideRange()
     {
         Pantry pantry = new Pantry();
@@ -171,6 +220,16 @@ public class RecommenderTest
     }
 
 
+    /**
+     * Records the result of a single test condition. Increments {@link #passed}
+     * and prints a PASS line if the condition is true; otherwise increments
+     * {@link #failed} and prints a FAIL line.
+     *
+     * @param testName
+     *            a description printed alongside the result
+     * @param condition
+     *            {@code true} if the test passed, {@code false} if not
+     */
     static void check(String testName, boolean condition)
     {
         if (condition)
@@ -183,5 +242,30 @@ public class RecommenderTest
             failed++;
             System.out.println("FAIL: " + testName);
         }
+    }
+
+
+    /**
+     * Meta-test that verifies {@link #check(String, boolean)} detects a failing
+     * condition. It deliberately fails one check, confirms that {@code failed}
+     * went up by one and {@code passed} did not change, then restores the
+     * counters so the deliberate failure isn't counted in the final totals.
+     */
+    static void testCheck_reportsFailureCorrectly()
+    {
+        int passedBefore = passed;
+        int failedBefore = failed;
+
+        check("[meta-test] intentional failing condition", false);
+
+        boolean failedIncremented =
+            Integer.valueOf(failed).equals(failedBefore + 1);
+        boolean passedUnchanged = Integer.valueOf(passed).equals(passedBefore);
+
+        passed = passedBefore;
+        failed = failedBefore;
+
+        check("check() increments failed on false", failedIncremented);
+        check("check() does not increment passed on false", passedUnchanged);
     }
 }
