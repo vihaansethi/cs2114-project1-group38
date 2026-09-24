@@ -22,7 +22,7 @@ A terminal-based Java program that recommends recipes based on the ingredients y
 - Handles bad input (blank names, duplicates, invalid menu choices) without crashing
 
 ## System Diagram
-![System diagram](system_diagram.jpeg)
+![System diagram](system_diagram.JPEG)
 
 ## Team
 - [Fernando Zuniga] — Pantry, Ingredient
