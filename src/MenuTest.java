@@ -4,6 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+
+/**
+ * This is the test class for menu
+ *
+ */
 public class MenuTest {
 
     static int passed = 0;

@@ -2,6 +2,10 @@ package src;
 
 import java.util.ArrayList;
 
+
+/**
+ * This is the test class for Recipe
+ */ 
 public class RecipeTest {
 
     static int passed = 0;

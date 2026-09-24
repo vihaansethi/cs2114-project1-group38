@@ -2,6 +2,9 @@ package src;
 
 import java.util.ArrayList;
 
+/**
+ * This is the test class for RecipeBook
+ */
 public class RecipeBookTest {
 
     static int passed = 0;

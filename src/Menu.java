@@ -7,6 +7,7 @@ import java.util.Scanner;
 /**
  * Handles all terminal input and output.
  *
+ * @author Fernando Zuniga Leon
  */
 public class Menu
 {

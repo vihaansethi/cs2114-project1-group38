@@ -3,7 +3,7 @@ package src;
 /**
  * Represents a single food item that can be stored in a Pantry
  * or required by a Recipe.
- *
+ *@author Fernando Zuniga Leon 
  *
  */
 public class Ingredient
